@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demonland.eportal.dao.MessageDao" >
+  <resultMap id="BaseResultMap" type="com.demonland.eportal.model.Message" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+	 <result column="person_name" property="personName" jdbcType="VARCHAR" />
+	  <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+	<result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="created_date" property="createdDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+   <sql id="Base_Column_List" >
+    id ,person_name,email ,company_name,phone ,ip,content ,created_date
+  </sql>
+  
+  <select id="query" resultMap="BaseResultMap" parameterType="com.demonland.eportal.model.ParamMessage" >
+    select
+    <include refid="Base_Column_List" />
+    from message 
+	<if test="pageCount != null and pageCount != 0">
+		limit #{startNum,jdbcType=INTEGER},#{pageCount,jdbcType=INTEGER}
+    </if>
+</select>
+
+ <insert id="insert" parameterType="com.demonland.eportal.model.Message" >
+	 insert into message(person_name,company_name,email ,phone ,ip,content ,created_date)
+	 values (#{personName,jdbcType=VARCHAR},#{companyName,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{ip,jdbcType=VARCHAR},
+	 #{content,jdbcType=VARCHAR}, #{createdDate,jdbcType=TIMESTAMP})
+ </insert>
+ 
+ <delete id="delMessage" parameterType="java.lang.Integer">
+	delete from message where id=#{delMessageId,jdbcType=INTEGER}
+ </delete>
+ 
+   <select id="getTotalCount" resultType="java.lang.Integer" parameterType="com.demonland.eportal.model.ParamProduct" >
+    select
+    count(*)
+    from message
+	</select>
+ 
+</mapper>

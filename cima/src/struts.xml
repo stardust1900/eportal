@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!--编码字符集-->
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<!--开启动态方法调用，不推荐.推荐使用通配符方式，指定method属性
+	<constant name="struts.enable.DynamicMethodInvocation" value="true" />--> 
+	<!--开发者模式，更多的堆栈调试信息，生产环境应关闭-->
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.action.extension" value="htm" />
+	<constant name="struts.freemarker.templatesCache" value="true" />
+	<constant name="struts.multipart.saveDir" value="/Users/shawn/test/tmp"/>
+	<constant name="struts.multipart.maxSize" value="50000000"/>
+<!-- 	<constant name="struts.allowed.action.names" value="[a-z]*[A-Z]*[0-9]*[.\-_!/]*" /> -->
+	<constant name="struts.allowed.action.names" value="[a-zA-Z]*[-]*[a-zA-Z]*[0-9]*" />
+	
+	<constant name="struts.custom.i18n.resources" value="messageResources"></constant> 
+	
+	<!-- struts常量配置 -->
+	<!-- 
+    <constant name="struts.i18n.reload" value="false" />
+    <constant name="struts.configuration.xml.reload" value="false" />
+    <constant name="struts.custom.i18n.resources" value="globalMessages" />
+    <constant name="struts.freemarker.manager.classname" value="customFreemarkerManager" />
+    <constant name="struts.serve.static" value="true" />
+    <constant name="struts.serve.static.browserCache" value="false" />-->
+	<!--导入其他的struts配置文件
+    <include file="struts-user-tiles.xml"/>-->
+	
+	<!-- 前台页面 --> 
+	<package name="page" extends="struts-default">
+		<action name="index" class="com.demonland.eportal.page.action.PageAction" method="home">
+			<result name="success">/home.jsp</result>
+			<interceptor-ref name="defaultStack"/>
+		</action>
+		
+		<action name="about" class="com.demonland.eportal.page.action.PageAction" method="about">
+			<result name="success">/about.jsp</result>
+		</action>
+		
+		<action name="products" class="com.demonland.eportal.page.action.PageAction" method="products">
+			<result name="success">/products.jsp</result>
+		</action>
+		
+		<action name="showProductDetail" class="com.demonland.eportal.page.action.PageAction" method="showProductDetail">
+			<result name="success">/productDetail.jsp</result>
+		</action>
+		
+		<action name="news" class="com.demonland.eportal.page.action.PageAction" method="news">
+			<result name="success">/news.jsp</result>
+		</action>
+		
+		<action name="showNewsDetail" class="com.demonland.eportal.page.action.PageAction" method="showNewsDetail">
+			<result name="success">/newsDetail.jsp</result>
+		</action>
+		
+		<action name="research" class="com.demonland.eportal.page.action.PageAction" method="research">
+			<result name="success">/research.jsp</result>
+		</action>
+		
+		<action name="contact" class="com.demonland.eportal.page.action.PageAction" method="contact">
+			<result name="success">/contact.jsp</result>
+		</action>
+		
+		<action name="change" class="com.demonland.eportal.page.action.InternationalAction" method="changeLanguage"> 
+			<result name="success">/test.jsp</result> 
+		</action> 
+		
+		<action name="change2" class="com.demonland.eportal.page.action.InternationalAction" method="changeLanguage2"> 
+			<result name="success" type="redirect">/page/index.htm</result>
+		</action> 
+
+		<action name="leaveMessage" class="com.demonland.eportal.page.action.PageAction" method="leaveMessage">
+			<result name="success">/message.jsp</result>
+		</action>
+		
+
+	</package>
+	
+	<package name="admin" extends="struts-default">
+		<interceptors>
+            <interceptor name="loginedCheck"
+                class="com.demonland.eportal.admin.interceptor.LoginedCheckInterceptor" />				
+				<!-- 拦截器栈 -->  
+            <interceptor-stack name="loginStack">  
+                <interceptor-ref name="defaultStack" />  
+                <interceptor-ref name="loginedCheck" />  
+            </interceptor-stack>  			
+        </interceptors>
+		
+		<global-results>  
+            <!-- 当返回login视图名时，转入/login.jsp页面 -->  
+            <result name="login">/WEB-INF/admin/login.jsp</result>  
+        </global-results>  
+		
+		<action name="home" class="com.demonland.eportal.admin.action.ManageAction" method="home">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/home.jsp</result>
+			<result name="input">/WEB-INF/admin/login.jsp</result>
+		</action>
+		
+		<action name="doLogin" class="com.demonland.eportal.admin.action.ManageAction" method="doLogin">
+			<result name="success">/WEB-INF/admin/home.jsp</result>
+			<result name="login">/WEB-INF/admin/login.jsp</result>
+		</action>
+		
+		<action name="logout" class="com.demonland.eportal.admin.action.ManageAction" method="logout">
+			<result name="success">/WEB-INF/admin/login.jsp</result>
+		</action>
+		
+		<action name="showProducts" class="com.demonland.eportal.admin.action.ProductAction" method="list">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/products.jsp</result>
+		</action>
+		
+		<action name="addProduct" class="com.demonland.eportal.admin.action.ProductAction" method="toAdd">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/addProduct.jsp</result>
+		</action>
+		
+		<action name="doAddProduct" class="com.demonland.eportal.admin.action.ProductAction" method="addProduct">
+			<interceptor-ref name="loginStack" />
+			<!-- <result name="success">/WEB-INF/admin/products.jsp</result> -->
+			<result name="success" type="redirect">/admin/showProducts.htm</result>
+			<interceptor-ref name="fileUpload">
+                 <!-- 单个上传文件的最大值-->
+                 <param name="maximumSize">50000000</param>
+                 <!-- 只能上传的文件的类型,可到tomcat的web-xml中查看各种文件类型-->
+                 <param name="allowedTypes">image/gif,image/jpeg,image/png</param>
+           </interceptor-ref>
+           <interceptor-ref name="defaultStack"/>
+		</action>
+		
+		<action name="delProduct" class="com.demonland.eportal.admin.action.ProductAction" method="delProduct">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/products.jsp</result>
+		</action>
+		
+		<action name="showProdDetail" class="com.demonland.eportal.admin.action.ProductAction" method="showProductDetail">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/productDetail.jsp</result>
+		</action>
+		
+		<action name="toEditProduct" class="com.demonland.eportal.admin.action.ProductAction" method="toEdit">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/editProduct.jsp</result>
+		</action>
+		
+		<action name="modifyProduct" class="com.demonland.eportal.admin.action.ProductAction" method="modifyProduct">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/products.jsp</result>
+		</action>
+		
+		<action name="showNews" class="com.demonland.eportal.admin.action.NewsAction" method="list">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/news.jsp</result>
+		</action>
+		
+		<action name="addNews" class="com.demonland.eportal.admin.action.NewsAction" method="toAdd">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/addNews.jsp</result>
+		</action>
+		<action name="doAddNews" class="com.demonland.eportal.admin.action.NewsAction" method="addNews">
+			<interceptor-ref name="loginStack" />
+			<result name="success" type="redirect">/admin/showNews.htm</result>
+		</action>
+		<action name="delNews" class="com.demonland.eportal.admin.action.NewsAction" method="delNews">
+			<interceptor-ref name="loginStack" />
+			<result name="success" type="redirect">/admin/showNews.htm</result>
+		</action>
+		<action name="toEditNews" class="com.demonland.eportal.admin.action.NewsAction" method="toEditNews">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/editNews.jsp</result>
+		</action>
+		
+		<action name="modifyNews" class="com.demonland.eportal.admin.action.NewsAction" method="modifyNews">
+			<interceptor-ref name="loginStack" />
+		<result name="success" type="redirect">/admin/showNews.htm</result>
+		</action>
+		
+		<action name="showMessages" class="com.demonland.eportal.admin.action.MessageAction" method="list">
+			<interceptor-ref name="loginStack" />
+			<result name="success">/WEB-INF/admin/messages.jsp</result>
+		</action>
+		
+		<action name="delMessage" class="com.demonland.eportal.admin.action.MessageAction" method="delMessage">
+			<interceptor-ref name="loginStack" />
+			<result name="success" type="redirect">/admin/showMessages.htm</result>
+		</action>
+		
+		<action name="uploadImg" class="com.demonland.eportal.admin.action.SummerNoteAction" method="uploadImg">
+			<interceptor-ref name="fileUpload">
+                 <!-- 单个上传文件的最大值-->
+                 <param name="maximumSize">50000000</param>
+                 <!-- 只能上传的文件的类型,可到tomcat的web-xml中查看各种文件类型-->
+                 <param name="allowedTypes">image/gif,image/jpeg,image/png</param>
+           </interceptor-ref>
+           <interceptor-ref name="defaultStack"/>
+		</action>
+	</package>
+		
+</struts>

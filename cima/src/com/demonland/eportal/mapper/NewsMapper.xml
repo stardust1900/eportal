@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demonland.eportal.dao.NewsDao" >
+  <resultMap id="BaseResultMap" type="com.demonland.eportal.model.News" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="summary" property="summary" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+	<result column="news_type" property="newsType" jdbcType="VARCHAR" />
+    <result column="created_date" property="createdDate" jdbcType="TIMESTAMP" />
+    <result column="updated_date" property="updatedDate" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id ,title ,summary ,content ,news_type,created_date ,updated_date ,remark ,sort_num
+  </sql>
+  
+<select id="query" resultMap="BaseResultMap" parameterType="com.demonland.eportal.model.ParamNews" >
+    select
+    <include refid="Base_Column_List" />
+    from news where del_flag=0
+	<if test="newsType != null">
+    and news_type=#{newsType,jdbcType=VARCHAR}
+    </if>
+	<if test="pageCount != null and pageCount != 0">
+		limit #{startNum,jdbcType=INTEGER},#{pageCount,jdbcType=INTEGER}
+    </if>
+</select>
+
+<select id="getNewsById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from news where del_flag=0 and id = #{id,jdbcType=INTEGER}
+</select>
+
+
+ <insert id="insert" parameterType="com.demonland.eportal.model.News" >
+ insert into news(title ,summary ,content ,news_type,created_date ,updated_date)
+ values (#{title,jdbcType=VARCHAR},#{summary,jdbcType=VARCHAR},
+ #{content,jdbcType=VARCHAR},#{newsType,jdbcType=VARCHAR}, #{createdDate,jdbcType=TIMESTAMP},
+  #{updatedDate,jdbcType=TIMESTAMP})
+ </insert>
+ 
+ <select id="getTotalCount" resultType="java.lang.Integer" parameterType="com.demonland.eportal.model.ParamNews" >
+    select
+    count(*)
+    from news where del_flag=0 
+	<if test="newsType != null">
+    and news_type=#{newsType,jdbcType=VARCHAR}
+    </if>
+</select>
+
+ <update id="delNews" parameterType="java.lang.Integer">
+ 	update news set del_flag=1 where id=#{delNewsId,jdbcType=INTEGER}
+ </update>
+
+  <update id="updateNews" parameterType="com.demonland.eportal.model.News">
+ 	update news set title=#{title,jdbcType=VARCHAR},
+ 	summary=#{summary,jdbcType=VARCHAR},
+ 	content=#{content,jdbcType=VARCHAR},
+ 	news_type=#{newsType,jdbcType=VARCHAR}
+ 	 where id=#{id,jdbcType=INTEGER}
+ </update>
+ 
+</mapper>
